@@ -1,0 +1,49 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Publishing App
+
+# Controls when the workflow will run
+on:
+  pull_request:
+    types: [ closed ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "create_release"
+  create_release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'release'
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '17'
+
+      - name: Get VERSION_NAME
+        id: get_version_name
+        run: echo "VERSION_NAME=${{ secrets.VERSION_NAME }}" >> $GITHUB_ENV
+
+      - name: Get RELEASE_VERSION_CODE
+        id: get_release_version_code
+        run: echo "RELEASE_VERSION_CODE=${{ secrets.RELEASE_VERSION_CODE }}" >> $GITHUB_ENV
+
+      - name: Get DEVELOP_VERSION_CODE
+        id: get_develop_version_code
+        run: echo "DEVELOP_VERSION_CODE=${{ secrets.DEVELOP_VERSION_CODE }}" >> $GITHUB_ENV
+
+      - name: Get QA_VERSION_CODE
+        id: get_qa_version_code
+        run: echo "QA_VERSION_CODE=${{ secrets.QA_VERSION_CODE }}" >> $GITHUB_ENV
+
+      - name: Print environment variables
+        run: |
+          echo "VERSION_NAME: ${{ env.VERSION_NAME }}"
+          echo "RELEASE_VERSION_CODE: ${{ env.RELEASE_VERSION_CODE }}"
+          echo "DEVELOP_VERSION_CODE: ${{ env.DEVELOP_VERSION_CODE }}"
+          echo "QA_VERSION_CODE: ${{ env.QA_VERSION_CODE }}"
