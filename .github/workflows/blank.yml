@@ -47,3 +47,12 @@ jobs:
           echo "RELEASE_VERSION_CODE: ${{ env.RELEASE_VERSION_CODE }}"
           echo "DEVELOP_VERSION_CODE: ${{ env.DEVELOP_VERSION_CODE }}"
           echo "QA_VERSION_CODE: ${{ env.QA_VERSION_CODE }}"
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Build Qa APK
+        run: ./gradlew assembleQa
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
