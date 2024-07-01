@@ -54,8 +54,8 @@ jobs:
       - name: Build Qa APK
         run: ./gradlew assembleQa
 
-      - name: Build Release APK
-        run: ./gradlew assembleRelease
+#      - name: Build Release APK
+#        run: ./gradlew assembleRelease
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v2
