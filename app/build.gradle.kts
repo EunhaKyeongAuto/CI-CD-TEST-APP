@@ -33,6 +33,38 @@ android {
             initWith(buildTypes["debug"])
         }
     }
+
+    tasks.whenTaskAdded {
+        doLast {
+            val isDebug = name.equals("assembleDebug", true)
+            val isQa = name.equals("assembleQa", true)
+            val isRelease = name.equals("assembleRelease", true)
+            val isBundleRelease = name.equals("bundleRelease", true)
+            val projectName = "cicdtest"
+            val buildTypeLabel = when {
+                isDebug -> "debug"
+                isQa -> "qa"
+                isRelease -> "release"
+                isBundleRelease -> "release"
+                else -> ""
+            }
+            val outputFileName = "$projectName-$buildTypeLabel"
+            val format = ".apk"
+            val specificOutputPath = project.layout.buildDirectory.dir("outputs/apk/$buildTypeLabel").get().asFile
+
+            specificOutputPath.walkTopDown().forEach { file ->
+                if (isBundleRelease && file.extension == "aab" || !isBundleRelease && file.extension == "apk") {
+                    val newFile = file.parentFile.resolve("$outputFileName$format")
+                    if (file.renameTo(newFile)) {
+                        println("File renamed to ${newFile.path}")
+                    } else {
+                        println("Failed to rename file ${file.path}")
+                    }
+                }
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
